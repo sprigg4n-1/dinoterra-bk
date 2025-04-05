@@ -27,7 +27,6 @@ public class User {
     private String lastname;
     private String username;
     private String password;
-    private String passwordHash;
 
     @Enumerated(EnumType.STRING)
     private UserRole role;

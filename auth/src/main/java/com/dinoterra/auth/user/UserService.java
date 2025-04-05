@@ -25,7 +25,7 @@ public class UserService {
         return userRepository.findById(id).orElse(null);
     }
 
-    public boolean authenticate(String username, String password) {
+    public User authenticate(String username, String password) {
         User user = userRepository.findByUsername(username);
 
         if (!user.getUsername().equals(username)) {
@@ -36,7 +36,7 @@ public class UserService {
             throw new BadCredentialsException("The password is incorect");
         }
 
-        return true;
+        return user;
     }
 
     public User createUser(User user) {

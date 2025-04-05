@@ -57,16 +57,12 @@ public class AuthController {
 
     @PostMapping("/users-login")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<String> loginUser(@RequestBody LoginRequest loginRequest, HttpSession session) {
+    public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest, HttpSession session) {
         try {
-            boolean isAuthenticated = userService.authenticate(loginRequest.username(), loginRequest.password());
+            User isAuthenticated = userService.authenticate(loginRequest.username(), loginRequest.password());
 
-            if (isAuthenticated) {
-                session.setAttribute("user", loginRequest.username());
-                return ResponseEntity.ok("Login was successful!");
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid username or password");
-            }
+            session.setAttribute("user", loginRequest.username());
+            return ResponseEntity.ok(isAuthenticated);
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to login");
         }
