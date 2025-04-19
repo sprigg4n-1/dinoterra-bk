@@ -74,6 +74,12 @@ public class DinosourController {
         return dinoService.getFiveRandomDinos();
     }
 
+    @GetMapping("/similarDinos/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<DinoResponse> getSimilarDinos(@PathVariable Long id) {
+        return dinoService.getSimilarDinos(id);
+    }
+
     @GetMapping("/dinos/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DinoResponse getDino(@PathVariable Long id) {
@@ -86,10 +92,10 @@ public class DinosourController {
         return "dino with id: " + id + " succesfully deleted";
     }
 
-    @GetMapping("/favoriteDinos/{userId}")
+    @GetMapping("/dinos/fav-list/{userId}")
     @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<List<DinoFavResponse>> getFavoriteDinos(@PathVariable Long userId) {
-        List<DinoFavResponse> favoriteDinos = dinoService.getFavoriteDinosByUserId(userId);
+    public ResponseEntity<List<DinoResponse>> getFavoriteDinos(@PathVariable Long userId) {
+        List<DinoResponse> favoriteDinos = dinoService.getFavoriteDinoResponses(userId);
         return ResponseEntity.ok(favoriteDinos);
     }
 
