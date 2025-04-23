@@ -21,10 +21,12 @@ import com.dinoterra.security.auth.RegisterRequest;
 import com.dinoterra.security.config.JwtService;
 import com.dinoterra.security.favorite.FavoriteDino;
 import com.dinoterra.security.favorite.FavoriteDinoService;
+import com.dinoterra.security.profilePhoto.ProfilePhotoRequest;
+import com.dinoterra.security.profilePhoto.ProfilePhotoService;
 import com.dinoterra.security.user.User;
+import com.dinoterra.security.profilePhoto.UserImage;
 import com.dinoterra.security.user.UserRepository;
 import com.dinoterra.security.user.UserResponse;
-
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -44,6 +46,7 @@ public class SecurityController {
     private final AuthenticationService authenticationService;
     private final UserRepository userRepository;
     private final FavoriteDinoService favoriteDinoService;
+    private final ProfilePhotoService photoService;
 
     @PostMapping("/users-register")
     public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request) {
@@ -111,6 +114,7 @@ public class SecurityController {
 
         try {
             User user = jwtService.extractUserFromToken(token);
+
             UserResponse userResponse = new UserResponse(
                     user.getId(),
                     user.getName(),
@@ -119,6 +123,7 @@ public class SecurityController {
                     user.getEmail(),
                     user.getPassword(),
                     user.getRole());
+
             return ResponseEntity.ok(userResponse);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to retrieve user data.");
@@ -126,9 +131,13 @@ public class SecurityController {
     }
 
     @GetMapping("/users")
-    public ResponseEntity<List<User>> getAllUsers() {
+    public ResponseEntity<List<UserResponse>> getAllUsers() {
         List<User> users = userRepository.findAll();
-        return ResponseEntity.ok(users);
+        List<UserResponse> userResponses = users.stream()
+                .map(user -> new UserResponse(user.getId(), user.getName(), user.getLastname(), user.getUsername(),
+                        user.getEmail(), user.getPassword(), user.getRole()))
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(userResponses);
     }
 
     @GetMapping("/users/{id}")
@@ -151,6 +160,31 @@ public class SecurityController {
         }
     }
 
+    @PostMapping("/users/update-profile-photo/{id}")
+    public ResponseEntity<String> updateProfilePhoto(@PathVariable Long id, @RequestBody ProfilePhotoRequest request) {
+        photoService.updateUserProfileImage(id, request);
+        return ResponseEntity.ok("Photo added to profile");
+    }
+
+    @GetMapping("/users/profile-photo/{id}")
+    public ResponseEntity<UserImage> getProfilePhoto(@PathVariable Long id) {
+        UserImage userImage = photoService.getUserImageByUserId(id);
+        if (userImage == null || userImage.getImage() == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userImage);
+    }
+
+    @DeleteMapping("/users/profile-photo/{id}")
+    public ResponseEntity<Void> deleteProfilePhoto(@PathVariable Long id) {
+        boolean deleted = photoService.deleteUserImageByUserId(id);
+        if (deleted) {
+            return ResponseEntity.noContent().build(); // 204 No Content
+        } else {
+            return ResponseEntity.notFound().build(); // 404 Not Found
+        }
+    }
+
     // fav dinos
     @PostMapping("/fav-add")
     public ResponseEntity<String> addFavorite(@RequestParam Long userId, @RequestParam Long dinosaurId) {
@@ -170,7 +204,6 @@ public class SecurityController {
         List<Long> dinosaurIds = favorites.stream()
                 .map(FavoriteDino::getDinoId)
                 .collect(Collectors.toList());
-
         return ResponseEntity.ok(dinosaurIds);
     }
 

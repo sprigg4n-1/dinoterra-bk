@@ -12,6 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.dinoterra.security.user.UserRepository;
+import com.dinoterra.security.user.UserResponse;
 
 import lombok.RequiredArgsConstructor;
 

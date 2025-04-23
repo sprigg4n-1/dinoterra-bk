@@ -10,7 +10,9 @@ import java.util.stream.Collectors;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.dinoterra.dinosaur.dino.enums.DinoDiet;
@@ -199,6 +201,25 @@ public class DinoService {
                     return mapToDinoRes(dino, images, locations);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public boolean isFavoriteDino(Long userId, Long dinoId) {
+        String url = "http://localhost:8003/api/v1/security/fav-list?userId=" + userId;
+
+        try {
+            ResponseEntity<Long[]> response = restTemplate.getForEntity(url, Long[].class);
+            Long[] favoriteIdsArray = response.getBody();
+
+            if (favoriteIdsArray == null || favoriteIdsArray.length == 0) {
+                return false;
+            }
+
+            List<Long> favoriteIds = Arrays.asList(favoriteIdsArray);
+            return favoriteIds.contains(dinoId);
+        } catch (RestClientException e) {
+            System.err.println("Error fetching favorites: " + e.getMessage());
+            return false;
+        }
     }
 
     private Dino mapToDinoReq(DinoRequest dinoRequest) {

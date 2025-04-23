@@ -33,6 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/security/auth-status").permitAll()
                         .requestMatchers("/api/v1/security/fav-list").permitAll()
                         .requestMatchers("/api/v1/security/fav-add").authenticated()
+                        // .requestMatchers("/api/v1/security/users/update-profile-photo").authenticated()
                         .anyRequest().authenticated())
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)

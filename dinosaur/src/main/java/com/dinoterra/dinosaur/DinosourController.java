@@ -18,8 +18,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.dinoterra.dinosaur.dino.Dino;
-import com.dinoterra.dinosaur.dino.DinoFavResponse;
 import com.dinoterra.dinosaur.dino.DinoRequest;
 import com.dinoterra.dinosaur.dino.DinoResponse;
 import com.dinoterra.dinosaur.dino.DinoService;
@@ -78,6 +76,12 @@ public class DinosourController {
     @ResponseStatus(HttpStatus.OK)
     public List<DinoResponse> getSimilarDinos(@PathVariable Long id) {
         return dinoService.getSimilarDinos(id);
+    }
+
+    @GetMapping("/isFavoriteDino")
+    @ResponseStatus(HttpStatus.OK)
+    public boolean isFavorite(@RequestParam Long userId, @RequestParam Long dinoId) {
+        return dinoService.isFavoriteDino(userId, dinoId);
     }
 
     @GetMapping("/dinos/{id}")
