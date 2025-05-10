@@ -176,12 +176,14 @@ public class SecurityController {
     }
 
     @DeleteMapping("/users/profile-photo/{id}")
-    public ResponseEntity<Void> deleteProfilePhoto(@PathVariable Long id) {
-        boolean deleted = photoService.deleteUserImageByUserId(id);
-        if (deleted) {
-            return ResponseEntity.noContent().build(); // 204 No Content
-        } else {
-            return ResponseEntity.notFound().build(); // 404 Not Found
+    public ResponseEntity<String> deleteProfilePhoto(@PathVariable String id) {
+        System.out.println("Received ID: " + id);
+        try {
+            Long userId = Long.parseLong(id);
+            boolean deleted = photoService.deleteUserImageByUserId(userId);
+            return deleted ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Invalid ID");
         }
     }
 

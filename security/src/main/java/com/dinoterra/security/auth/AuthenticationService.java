@@ -20,6 +20,14 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
+        if (userRepository.findByUsername(request.username()).isPresent()) {
+            return new AuthenticationResponse("username_user_exist");
+        }
+
+        if (userRepository.findByEmail(request.email()).isPresent()) {
+            return new AuthenticationResponse("email_user_exist");
+        }
+
         var user = new User();
 
         user.setName(request.name());

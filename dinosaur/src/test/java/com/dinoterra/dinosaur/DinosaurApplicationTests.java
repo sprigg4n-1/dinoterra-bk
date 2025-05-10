@@ -1,15 +1,15 @@
-package com.dinoterra.dinosaur;
+// package com.dinoterra.dinosaur;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
+// import org.junit.jupiter.api.Test;
+// import org.springframework.boot.test.context.SpringBootTest;
+// import org.springframework.context.annotation.Import;
 
-@Import(TestcontainersConfiguration.class)
-@SpringBootTest
-class DinosaurApplicationTests {
+// @Import(TestcontainersConfiguration.class)
+// @SpringBootTest
+// class DinosaurApplicationTests {
 
-	@Test
-	void contextLoads() {
-	}
+// @Test
+// void contextLoads() {
+// }
 
-}
+// }

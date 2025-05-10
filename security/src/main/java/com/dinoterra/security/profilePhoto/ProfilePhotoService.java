@@ -41,10 +41,14 @@ public class ProfilePhotoService {
     }
 
     public boolean deleteUserImageByUserId(Long userId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
         UserImage userImage = photoRepository.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("User image not found"));
-        ;
+
         if (userImage != null) {
+            user.setProfileImage(null);
             photoRepository.delete(userImage);
             return true;
         }
